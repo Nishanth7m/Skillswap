@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  # MongoDB Service
+  mongo:
+    image: mongo:6.0
+    container_name: skillswap_mongo
+    command: mongod --replSet rs0 --bind_ip_all
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - skillswap_network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # MongoDB Replica Set Initiator
+  mongo-init:
+    image: mongo:6.0
+    container_name: skillswap_mongo_init
+    depends_on:
+      mongo:
+        condition: service_healthy
+    command: >
+      bash -c "
+      echo 'Waiting for MongoDB to stabilize...';
+      sleep 3;
+      mongosh --host mongo:27017 --eval 'rs.initiate({_id: \"rs0\", members: [{_id: 0, host: \"mongo:27017\"}]})';
+      echo 'Replica set initiated!';
+      "
+    networks:
+      - skillswap_network
+
+  # Node.js Express API Server
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: skillswap_server
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - MONGODB_URI=mongodb://mongo:27017/skillswap?replicaSet=rs0
+      - JWT_ACCESS_SECRET=d8a7c6f5e4d3c2b1a09f8e7d6c5b4a32f1e0d9c8b7a69584736251403f2e1d0c
+      - JWT_REFRESH_SECRET=7f6e5d4c3b2a10f9e8d7c6b5a493827160f5e4d3c2b1a09f8e7d6c5b4a32f1e0
+      - JWT_ACCESS_EXPIRY=15m
+      - JWT_REFRESH_EXPIRY=7d
+      - NODE_ENV=production
+      - CORS_ORIGIN=http://localhost
+    depends_on:
+      mongo-init:
+        condition: service_completed_successfully
+    networks:
+      - skillswap_network
+
+  # React Client SPA (served via Nginx)
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: skillswap_client
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+    networks:
+      - skillswap_network
+
+networks:
+  skillswap_network:
+    driver: bridge
+
+volumes:
+  mongo_data:
+    driver: local

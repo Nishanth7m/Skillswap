@@ -1,0 +1,16 @@
+# Node packages
+node_modules/
+dist/
+build/
+server/logs/
+
+# Secrets
+.env
+.env.local
+.env.*.local
+
+# OS / IDE
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
