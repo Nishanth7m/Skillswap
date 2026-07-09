@@ -18,8 +18,8 @@ export const SocketProvider = ({ children }) => {
       return;
     }
 
-    // Connect to Socket.io server passing token in auth payload
-    const newSocket = io('https://skillswap-backend-769621790187.us-central1.run.app', {
+    const backendURL = import.meta.env.VITE_API_URL || 'https://skillswap-backend-769621790187.us-central1.run.app';
+    const newSocket = io(backendURL, {
       auth: {
         token: accessToken,
       },

@@ -4,7 +4,7 @@ import axios from 'axios';
 const AuthContext = createContext(null);
 
 // Configure base URL for Axios
-axios.defaults.baseURL = 'https://skillswap-backend-769621790187.us-central1.run.app';
+axios.defaults.baseURL = import.meta.env.VITE_API_URL || 'https://skillswap-backend-769621790187.us-central1.run.app';
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
