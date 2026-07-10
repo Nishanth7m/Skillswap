@@ -21,10 +21,7 @@ services:
       - key: JWT_REFRESH_EXPIRY
         value: 7d
       - key: CORS_ORIGIN
-        fromService:
-          type: web
-          name: skillswap-frontend
-          property: url
+        sync: false # Set manually in Render Dashboard after frontend deploys to break circular dependency
 
   # 2. Frontend Static Site
   - type: web
