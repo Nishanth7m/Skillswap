@@ -23,9 +23,9 @@ services:
       - key: CORS_ORIGIN
         sync: false # Set manually in Render Dashboard after frontend deploys to break circular dependency
 
+statics:
   # 2. Frontend Static Site
-  - type: static
-    name: skillswap-frontend
+  - name: skillswap-frontend
     rootDir: client
     buildCommand: npm install && npm run build
     publishPath: dist
