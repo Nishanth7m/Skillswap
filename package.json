@@ -9,5 +9,8 @@
   "scripts": {
     "start": "npm start --workspace=server",
     "build": "npm run build --workspace=client"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   }
 }

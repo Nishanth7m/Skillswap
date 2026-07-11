@@ -6,6 +6,7 @@ const connectDB = async () => {
     const conn = await mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/skillswap');
     logger.info(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
+    console.error('DATABASE_CONNECTION_ERROR:', error);
     logger.error(`Database connection error: ${error.message}`);
     process.exit(1);
   }
