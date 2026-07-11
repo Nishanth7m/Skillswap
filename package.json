@@ -1,0 +1,13 @@
+{
+  "name": "skillswap-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "start": "npm start --workspace=server",
+    "build": "npm run build --workspace=client"
+  }
+}
