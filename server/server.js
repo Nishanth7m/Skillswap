@@ -27,8 +27,12 @@ connectDB();
 initSocket(server);
 
 // Middleware
+// Dynamic CORS configuration (automatically stripping trailing slashes)
+const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:5173';
+const allowedOrigin = corsOrigin.endsWith('/') && corsOrigin !== '/' ? corsOrigin.slice(0, -1) : corsOrigin;
+
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  origin: allowedOrigin,
   credentials: true,
 }));
 app.use(express.json());
